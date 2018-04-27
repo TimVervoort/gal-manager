@@ -5,39 +5,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once('settings.php');
-
-if (!isLoggedIn()) {
-?>
-<!DOCTYPE html>
-<html lang="nl">
-  <head>
-    <title>Gallery Manager</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <style type="text/css">
-      @import url('https://fonts.googleapis.com/css?family=Roboto');
-      html, body {font-family: 'Roboto', sans-serif;height:100%;width:100%;margin:0;padding:0;overflow:hidden;background:#111;color:#fff;text-align:center;font-weight:300;display:flex;flex-direction:column;justify-content:center;}
-      form {width:100%;height:auto;overflow:auto;marign:0;padding:0;}
-      input {box-sizing:border-box;width:90%;max-width:400px;margin:20px auto;text-align:center;border:0;background:#eee;color:#123;clear:both;display:block;overflow:hidden;height:50px;line-height:50px;}
-      a:link, a:visited {color:#fff;text-decoration:underline;}
-    </style>
-  </head>
-  <body>
-    <h1>Login to edit galleries</h1>
-    <form action="index.php" method="post">
-      <input type="text" name="user" placeholder="Username" required />
-      <input type="password" name="password" placeholder="Password" required />
-      <input type="submit" value="Login" />
-    </form>
-    <p>&copy; <a href="https://www.timvervoort.com">Tim Vervoort</a></p>
-  </body>
-</html>
-<?php
-    die();
-}
-require_once('manager.php');
-$manager = new GalleryManager();
 ?>
 <!DOCTYPE html>
 <html>
@@ -150,24 +117,6 @@ $manager = new GalleryManager();
         width: 220px;
         height: 220px;
         background: rgba(226, 27, 27, 0.8);
-      }
-      li .to-left, li .to-right {
-          width: 25px;
-          height: 25px;
-          text-align: center;
-          line-height: 25px;
-          color: #fff;
-          background: rgba(20, 20, 20, 0.5);
-          top: calc(200px / 2 - 25px / 2);
-          position: absolute;
-          z-index: 999;
-          display: block;
-      }
-      li .to-left {
-          left: 0;
-      }
-      li .to-right {
-          right: 0;
       }
       .progress {
         width: 100%;
@@ -313,7 +262,7 @@ $manager = new GalleryManager();
         echo '<p>Click the red cross to delete the image from the gallery but not from the server.</p><ul>';
         $imgs = $manager->getGalleryContents($gal['id']);
         foreach ($imgs as $img) {
-          echo '<li data-url="'.$img['img'].'"><div class="image" style="background-image:url('.$thumbnails.$img['img'].');"><img class="delete" id="'.$img['img'].'" src="icons/delete.svg" alt="Delete image" title="Delete image from this gallery but not from the server." /></div></li>';
+          echo '<li><div class="image" style="background-image:url('.$thumbnails.$img['img'].');"><img class="delete" id="'.$img['img'].'" src="icons/delete.svg" alt="Delete image" title="Delete image from this gallery but not from the server." /></div></li>';
         }
         echo '</ul></li>';
       }
@@ -341,10 +290,10 @@ $manager = new GalleryManager();
         $('.notification').click(function() { $(this).fadeOut(); });
       }
 
-      $('body').on('click', '.image', function(e) {
+      $('body').on('click', '.image', function() {
          var img = $(this).find('.delete').attr('id');
          if (!img) { img = $(this).find('.deleteDisk').attr('id'); }
-         //window.open('<?php echo $uploads; ?>'+img, '_blank');
+         window.open('<?php echo $uploads; ?>'+img, '_blank');
       });
 
       $('body').on('click', '.deleteDisk', function() {
@@ -492,61 +441,6 @@ $manager = new GalleryManager();
          }
        });
      });
-
-     $('ul.gallery li ul li div.image').each(function(i, v) {
-        var prev = $(v).parent().prev().data('url');
-        var next = $(v).parent().next().data('url');
-        $(v).append('<div class="to-left" data-left="'+prev+'">&lt;</div>');
-        $(v).append('<div class="to-right" data-right="'+next+'">&gt;</div>');
-     });
-
-     $('body').on('click', '.to-left', function(e) {
-         var imgA = $(e.currentTarget).parent().parent().prev();
-         var imgB = $(e.currentTarget).parent().parent();
-         var gal = imgA.parent().parent().attr('id');
-         var imgAid = imgA.attr('data-url');
-         var imgBid = imgB.attr('data-url');
-         if (!imgAid || !imgBid || !gal) { return; }
-         var temp = imgA.html();
-         imgA.html(imgB.html());
-         imgB.html(temp);
-         console.log('Change order '+imgAid+' with '+imgBid+' in gallery '+gal);
-         $.ajax({
-             type: 'POST',
-             url: 'manager.php?switch&gal='+gal+'&imgA='+imgAid+'&imgB='+imgBid,
-             dataType: 'html',
-             success: function(data) {
-                 notification('Changed order of images.', 'green');
-             },
-             error: function() {
-                 notification('Error. Try again.', 'red');
-             }
-         });
-      });
-
-      $('body').on('click', '.to-right', function(e) {
-          var imgA = $(e.currentTarget).parent().parent();
-          var imgB = $(e.currentTarget).parent().parent().next();
-          var gal = imgA.parent().parent().attr('id');
-          var imgAid = imgA.attr('data-url');
-          var imgBid = imgB.attr('data-url');
-          if (!imgAid || !imgBid || !gal) { return; }
-          var temp = imgA.html();
-          imgA.html(imgB.html());
-          imgB.html(temp);
-          console.log('Change order '+imgAid+' with '+imgBid+' in gallery '+gal);
-          $.ajax({
-              type: 'POST',
-              url: 'manager.php?switch&gal='+gal+'&imgA='+imgAid+'&imgB='+imgBid,
-              dataType: 'html',
-              success: function(data) {
-                  notification('Changed order of images.', 'green');
-              },
-              error: function() {
-                  notification('Error. Try again.', 'red');
-              }
-          });
-      });
 
     </script>
 
