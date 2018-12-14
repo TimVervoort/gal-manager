@@ -1,0 +1,39 @@
+  /* General styles */
+  @import url('https://fonts.googleapis.com/css?family=Roboto');
+  html, body {
+      font-family: 'Roboto', sans-serif;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: #eee;
+      color: #333;
+      font-weight: 300;
+      padding: 20px;
+      box-sizing: border-box;
+  }
+  a:link, a:visited {
+      color: #333;
+      text-decoration: underline;
+  }
+  input, .btn {
+      box-sizing: border-box;
+      border: none;
+      transition: all 0.3s;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  input[type=submit]:hover, .btn:hover {
+      cursor: pointer;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      background-color: #ddd;
+  }
+  ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+  }
+  li {
+      margin: 0;
+      padding: 0;
+  }

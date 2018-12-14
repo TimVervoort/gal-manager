@@ -3,29 +3,27 @@ Simple online website gallery manager
 
 # How to use
 Use the database_setup.sql file to initialize the database. Create a table, user and password.
-Store thes credentials in the manager.php file (see comments).
-Make sure the uploads and thumbs folder have write permission, chmod to 777.
+Store thes credentials in the settings.php file (see comments).
+Make sure the uploads and thumbs folder have write permission, chmod to +w.
 Create a username and password in the settings.php for the administrator.
-Go to index.php and everything should be ready to go.
+Navigate with your browser to index.php and everything should be ready to go.
 
 # Functionalities
-Upload and resize images, create thumbnails, create galleries, manage galleries and display galleries.
+Upload and resize images, create thumbnails, upload video's, import images and video's from websites, swap order from images, create galleries, manage galleries and display galleries.
 
-# Display a gallery on the website
-NOTE: there is a bug, the user should be logged in to view the gallery, otherwise the login form is displayed. This will be fixed in the next commit.
-A gallery is retrieved by calling the getGalleryContents(gallery) function where gallery is the gallery identifier (see database for the identifier).
-The function returns a list of key value pair 'image' => filename.
-Example:
+# Display a gallery
+Include the handler.php file somewhere on the page where you want to display one more galleries. Replace album ID with the actual ID of the image. Include the following snippet:
 ```php
 <?php
-$manager = new GalleryManager();
-$images = $manager->getGalleryContents(0);
-foreach ($images as $img) {
-  echo '<img src="'.$uploads.$img['img']." />';
-}
+    require_once('inc/handler.php');
+    displayAlbum(ALBUM_ID);
 ?>
 ```
- 
-# Comming soon
-Swap images to change order.
-Rename galleries.
+Don't know the ID of the gallery? Look it up in the database or navigate to handler.php with your browser, it should display a JSON with all the available galleries.
+The JSON can also be used to display galleries without the use of PHP.
+
+# Future functionalities
+- Generate a thumbnail for a video.
+- Responsive dashboard.
+- Multilanguage dashboard.
+- Enforce storage limit (front & back end) and display usage.

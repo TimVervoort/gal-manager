@@ -18,7 +18,6 @@ CREATE TABLE `Images` (
   `title` varchar(200) NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 ALTER TABLE `Gallery`
   ADD PRIMARY KEY (`id`);
 
